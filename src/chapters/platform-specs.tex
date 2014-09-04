@@ -1,25 +1,51 @@
 \chapter{The t1040 platform}
 \label{chapter:t1040-platform}
 
-\todo{Baga text}
+This chapter offers details on the hardware used in this "Router on a chip". The
+first section offers hardware specifications necessary when comparing this
+platform to other commercial routers, the second section offers general details
+on the specific architecture used when building the platform, and the last
+section evaluates the strengths and weakneses of the hardware in order to asses
+better the final performance of this application
+
 
 \section{HW specs}
 \label{sec:specs}
 
-This thesis presents the \textbf{\project}.
+The t1040 platform hosts a quad core processor and targets the low-end sector through
+it's price accesibility and low power consumption. 
+The e5500 cores are based on the Power architecture, have a maximum frequency of
+1.4Ghz and host a 256KB L2 cache each. 
 
-This is an example of a footnote \footnote{\url{www.google.com}}. You can see here a reference to \labelindexref{Section}{sub-sec:proj-objectives}.
+An important feature for this aplication
+is the presence of the 3 levels of instructions: user, supervisor and
+hypervisor. This allows the processor to cooperate with a hypervisor, enabling
+hardware virtualisation and extending the application scenarios that can be run.
 
-Here we have defined the CS abbreviation.\abbrev{CS}{Computer Science} and the UPB abbreviation.\abbrev{UPB}{University Politehnica of Bucharest}
+The RAM memory is DDR3 and the platform support a maximum throughput of
+1600MT/s. DMA is dual four channel
+
+\todo{reread the above paraghraph}
+
+On the connectivity side, included are 2 Serial ATA(SATA 2.0) controllers,
+enhanced secure digital host controllers (SD/MMC/eMMC), 2 USB2.0 ports with integrated PHYs, 4
+PCI-express ports, controllers for NAND and NOR flash memory and 4 UART ports.
+
+\todo{Poate e mai bine ca lista??}
+
+The networking connectivity includes 5 Gbps Ethernet MAC ports (with support for
+SGMII and QSGMII interfaces) and a hardware Gigabit Ethernet switch with 8 ports.
 
 
 \section{General arch details}
 \label{sub-sec:arch-details}
 
-We have now included \labelindexref{Figure}{img:report-framework}.
+Being a Communications Processor T1040 offers facilities for speeding up packet
+analysis, clasification and distribution, by offloading them in hardware
 
-\fig[scale=0.5]{src/img/reporting-framework.pdf}{img:report-framework}{Reporting Framework}
-
+%\labelindexref{Figure}{img:t1040-diagram}.
+\todo{cred ca e mai bine pe lateral, pusa pe o pagina intreaga}
+\fig[scale=0.5]{src/img/t1040-diagram.jpg}{img:t1040-diagram}{T1040 diagram}
 
 
 We can also have citations like \cite{iso-odf}.
