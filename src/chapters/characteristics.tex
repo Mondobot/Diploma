@@ -1,29 +1,116 @@
 \chapter{Features}
 \label{chapter:features}
+\todo{Capitolul este complet, dar continutul trebuie extins}
 
-\textbf{This is just a demo file. It should not be used as a sample for a thesis.}\\
-\todo{Remove this line (this is a TODO)}
+This chapter presents the different functionalities of the router.
+Some of them are basic, while some of them are more advanced.
+The basic features are needed in order for it to function as a router,
+while the advanced ones showcase some interesting applications that
+can be housed and run on this router.
 
-\section{LAN switching}
-\label{sec:lan-switching}
+\section{Basic functionality}
+These functionalities are needed by the application in order to function
+as a router. They are provided by almost all the commercial routers,
+therefore they can not be absent.
 
-\section{Wireless network}
-\label{sec:wireless}
+\subsection{LAN network with switching}
+\label{sub-sec:lan-switching}
+One of the basic characteristics of a router is being able to function as
+a switch. Software solutions, while being cheaper and more versatile
+in configuring, have a lot to suffer when it comes to intense 
+packet crunching. This is why HW switches are preffered.
 
-\section{Wireless/LAN bridging}
-\label{sec:bridging}
+The integrated hardware switch provides 8 LAN ports and the chip is able
+to handle the packets up the Line Rate of 1Gbps.
 
-\section{HW firewall}
-\label{sec:hw-firewall}
 
-\section{Easy administration / Webmin}
-\label{sec:webmin}
+\subsection{Wireless network}
+\label{sub-sec:wireless}
+Included in the router is a wireless network that complies with the
+IEEE 802.11n standard.
 
-\section{HW/SW routing}
-\label{sec:routing}
+\todo{mai spune ceva?}
 
-\section{NAT}
-\label{sec:nat}
+\subsection{Wireless security and authentification}
+\label{sub-sec:wireless-sec}
+Limiting access to the wireless network is done in software by hostapd,
+through the WPA2 protocol.
 
-\section{SW services}
-\label{sec:sw-services}
+\subsection{Wireless + LAN bridge}
+\label{sub-sec:bridging}
+LAN and Wireless are bridged forming a single address space. This choice
+was made for the sake of simplicity, although it has a downside. Switching
+between LAN and the Wireless network is limited in speed compared 
+to switching just between the LAN ports
+
+\subsection{HW/SW routing}
+\label{sub-sec:routing}
+Routing is the core of the application. It can be done both in HW and SW.
+
+Routing using the hardware means configuring the Frame Manager to intercept
+certain types of traffic / addresses, to bypass verification by the kernel 
+and send them directly to a specified port. While it is a bit rigid and
+harder to configure, it can provide a very important speed boost over SW
+routing.
+
+
+\subsection{NAT}
+\label{sub-sec:nat}
+\todo{Oare trebuie explicat ce este NAT??}
+Network address translation is done in software, through iptables.
+
+\subsection{SW services}
+\label{sub-sec:sw-services}
+Among the basic software services there is a DHCP server, responsible 
+for servicing the LAN + Wireless.
+
+Port forwarding thorugh iptables.
+
+\todo{oare NAT merge pus tot aici?}
+
+\subsection{Easy administration using Webmin}
+\label{sub-sec:webmin}
+\todo{da linkuri si explica mai bine ce e Webmin}
+Webmin is an open source project that provides a web-based interface for
+system administration for Unix. Using any modern browser one can setup
+user accounts, Apache, DNS and change everything you want about the
+administrated machine. 
+
+Using Webmin administrators don't need to connect phisically to the machine
+and manually edit configuration files. It also provides support for scripts,
+a shell and has a modular construction, making it easy to extend, limit
+the functionalities of the client.
+
+All administration is done through Webmin.
+
+\section{Advanced functionality}
+These features are not critical in order for the machine to run as a router,
+but provide powerful aditions to the range of applications the machine has.
+
+
+\subsection{HW/SW firewall}
+\label{sub-sec:hw-firewall}
+The router has firewalling capabilities in software, through iptables.
+It also has the ability to configure the HW in order to limit specific IPs,
+block ports and filter incoming traffic.
+
+\subsection{Demilitarized partition}
+\label{sub-sec:dmz}
+For improved security, the router features two different virtual machine
+partitions: the Master partition, which controlls 3 of the 4 CPU cores
+and all the HW, and a Demilitarized partition (DMZ), which controlls just one
+CPU core.
+
+This DMZ partition can be compromised without losing data, or contaminating
+the entire machine. It can be easily rebooted and restored without 
+rebooting the whole router. The root filesystem is loaded from flash, 
+but it can be loaded restored from an virtual machine image as well.
+
+It has a range of applications, for example hosting webservers and it's
+completely isolated.
+
+\subsection{SW services}
+\label{sub-sec:sw-services}
+Installed on the DMZ partition is a lighttpd server that serves static content.
+It's just an example of the application that can run securely, without
+impacting the router's overall performance

@@ -1,26 +1,26 @@
 \chapter{The t1040 platform}
 \label{chapter:t1040-platform}
 
-This chapter offers details on the hardware used in this "Router on a chip". The
-first section offers hardware specifications necessary when comparing this
-platform to other commercial routers, the second section offers general details
-on the specific architecture used when building the platform, and the last
-section evaluates the strengths and weakneses of the hardware in order to asses
-better the final performance of this application
+This chapter offers details on the hardware used in this "Router on a chip".
+The first section offers hardware specifications necessary when comparing this
+platform to other commercial routers, the second section offers general
+details on the specific architecture used when building the platform,
+and the last section evaluates the strengths and weakneses of the hardware
+in order to asses better the final performance of this application
 
 
 \section{HW specs}
 \label{sec:specs}
 
-The t1040 platform hosts a quad core processor and targets the low-end sector through
-it's price accesibility and low power consumption. 
-The e5500 cores are based on the Power architecture, have a maximum frequency of
-1.4Ghz and host a 256KB L2 cache each. 
+The t1040 platform hosts a quad core processor and targets the low-end
+sector through it's price accesibility and low power consumption.
+The e5500 cores are based on the Power architecture, have a maximum
+frequency of 1.4Ghz and host a 256KB L2 cache each.
 
-An important feature for this aplication
-is the presence of the 3 levels of instructions: user, supervisor and
-hypervisor. This allows the processor to cooperate with a hypervisor, enabling
-hardware virtualisation and extending the application scenarios that can be run.
+An important feature for this aplication is the presence of the 
+3 levels of instructions: user, supervisor and hypervisor. This allows 
+the processor to cooperate with a hypervisor, enabling hardware 
+virtualisation and extending the application scenarios that can be run.
 
 The RAM memory is DDR3 and the platform support a maximum throughput of
 1600MT/s. DMA is dual four channel
@@ -28,28 +28,48 @@ The RAM memory is DDR3 and the platform support a maximum throughput of
 \todo{reread the above paraghraph}
 
 On the connectivity side, included are 2 Serial ATA(SATA 2.0) controllers,
-enhanced secure digital host controllers (SD/MMC/eMMC), 2 USB2.0 ports with integrated PHYs, 4
-PCI-express ports, controllers for NAND and NOR flash memory and 4 UART ports.
+enhanced secure digital host controllers (SD/MMC/eMMC), 2 USB2.0 ports
+with integrated PHYs, 4 PCI-express ports, controllers for NAND and NOR
+flash memory and 4 UART ports.
 
 \todo{Poate e mai bine ca lista??}
 
 The networking connectivity includes 5 Gbps Ethernet MAC ports (with support for
 SGMII and QSGMII interfaces) and a hardware Gigabit Ethernet switch with 8 ports.
 
-
+\todo{Spune de specificatiile placii wireless}
 \section{General arch details}
 \label{sub-sec:arch-details}
 
-Being a Communications Processor T1040 offers facilities for speeding up packet
-analysis, clasification and distribution, by offloading them in hardware
+Being a Communications Processor T1040 offers facilities for speeding up
+packet analysis, clasification and distribution, by offloading 
+them in hardware. Also present are Buffer Managers and Queue Managers 
+for handling frames in hardware, before they get sent for processing.
 
 %\labelindexref{Figure}{img:t1040-diagram}.
 \todo{cred ca e mai bine pe lateral, pusa pe o pagina intreaga}
 \fig[scale=0.5]{src/img/t1040-diagram.jpg}{img:t1040-diagram}{T1040 diagram}
 
+As soon as a packet enters through the physical interface it gets handled 
+by a Frame Manager. The Frame Manager is responisble for having pre-allocated
+frames for the incoming packet. This is where the Parse, Classify, Distribute
+step takes place. The pattern maching is done by a configurable HW engine.
+Based on the analysis, the packet is then classified and handed to the
+Queue Manager. The Queue Manager can set affinities for different types of
+traffic, allowing to send all packets of a type to preset processor
 
 We can also have citations like \cite{iso-odf}.
 
 \section{Why is it good for what we need}
 
+The presence of a Frame Manager, PCD(Parse, Classify, Distribute) engine
+and encription/decription engine means that an important part of 
+the operations done by a router, for example static forwarding, 
+blocking ports and filtering traffic can be done by the hardware.
 
+All this hardware offloading capabilities of this platform helps save 
+important CPU cycles allowing it to maintain higher transfer rates with with
+less CPU load, leaving more capabilities for the applications running on the
+machine. 
+
+These advantages recommend the platform for this type of application.
