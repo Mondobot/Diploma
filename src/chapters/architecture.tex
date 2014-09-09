@@ -1,9 +1,234 @@
-\chapter{Architecture}
+\chapter{Architecture / Implementation}
 \label{chapter:architecture}
 
-\textbf{This is just a demo file. It should not be used as a sample for a thesis.}\\
-\todo{Remove this line (this is a TODO)}
+\todo{schema cu partitionarea si flow-urile}
 
-\section{?????}
-\label{sec:noidea}
+So far, the HW specifications and features of this router were covered. This
+chapter provides details in the internal functioning of the machine, 
+how all the services, settings and systems work together in order for 
+it to function as a router.
 
+\section{Overview}
+\label{sec:general-view}
+
+From a top down perspective the router is composed of 2 different virtual
+machines that run on the hardware, that will pe called partitions:
+\begin{itemize}
+	\item The Master partition
+	\item Demilitarised or Slave partition (DMZ)
+\end{itemize}
+
+Each parition runs its own kernel and rootfilesystem and is completely
+independent of the other partition, meaning it can be shut down or rebooted
+without impacting the other partitions. In practice, the DMZ is dependent
+on the Master partition, as all traffic that is destined for the DMZ passes
+through the Master.
+
+Both Master and DMZ run the same kernel image which is based on the
+8.12 linux kernel.The Master partition has its root filesystem loaded
+from the HDD, while the DMZ has the root filesystem in flash.
+
+\subsection{Master partition}
+This partition is responsible for handling most of the HW the machine has.
+It controls 3 of the 4 cores, the HDD, all the conectivity ports and 
+network interfaces.
+
+It also functions as a gateway, linking the external network (the internet)
+with the Wireless, LAN and DMZ.
+
+As such, it's natural for all the critical software components and services
+to be hosted on the Master partition.
+
+\subsection{DMZ partition}
+The second partition acts as a deployment space for all the services that need
+to be accesed from the external network. This partition can be compromised
+without endangering the router or the internal network.
+
+Because the root filesistem is always loaded from flash memory, the DMZ
+acts as a frozen machine, any changes made there being non-persistent.
+In case of a malitious attack, a simple reboot will restore the machine to
+it's previous state, without endangering the Master partition.
+
+The DMZ hosts a lighttpd server which serves static content, but virtually
+any service that can run on a single core can be deployed there.
+In case of more complex servers (which need persistent storage) the DMZ
+cand act as a frontend, having a backend on the Master partition and exchanging
+calls.
+
+\section{Networks}
+\label{sec:networks}
+
+\todo{schema cu toate retelele}
+From the networking point of view, the router hosts 4 networks and 3 addres spaces:
+\begin{itemize}
+	\item LAN + Wireless are bridged under the same address space
+	\item External network provides the Master partition with a dinamic IP, making
+	it a gateway
+	\item Communication between partition is done through macless ports
+\end{itemize}
+
+\subsection{The Bridge}
+\todo{schema cu bridge-ul si switch-ul}
+The wireless interface(wlan0) and the LAN interface(eth1) are bridged using
+OpenVSwitch, an open source solution for software switches. The bridge
+acts as contact point between LAN, Wireless and the other networks.
+The bridge interface is configured with a static IP and the DHCP server
+listens for request on this interface.
+
+Switching inside the LAN network is done at high speed, as the hardware switch
+handles all the packets sent between the physical switch interfaces, but all
+traffic that is sent to the Wireless network has to go through the bridge and
+through one of the CPUs.
+
+The switch has an internal port connected to the machine (controlled by the
+operating sistem) fig??? which is used as an exit point for all the internal
+traffic of the switch. The problem is that this port is Gigabit,
+so it's speed is insufficient in order to service the combined traffic
+speeds of the external ports simultaneously. This is effectively a bottleneck.
+Such behavior can occur for example when all the machines connected to the 
+external ports try to transfer data to the internet.
+
+The Wireless Adapter has a maximum speed of 150Mbps so the maximum 
+(theoretical) transfer rate between a machine connected through 
+the Wireless network is limited to that amount.
+The setup can be upgraded with a  more powerful wireless card, 
+but for this type of application the Gigabit Wireless card was considered
+unnecessary.
+
+\subsection{Connecting to the Internet}
+One of the Ethernet ports(eth0) is connected directly to the exterior network.
+By default this internet receives it's IP dinamically, but it can be
+configured to have a static IP, or to connect through PPPoE.
+
+Being the only connection with the exterior, this makes the Master Partition
+the Gateway of all the networks. With this in mind, certain protocols and
+services such as NAT and firewalling are specific only to this interface.
+
+In a real-life scenario, where several LAN clients are trying to send
+traffic to the exterior this interface can prove to be a bottleneck, as 
+it's speed is Gigabit(1Gbps), while the combined maximum traffic of all the
+other networks exceeds the ports capabilities.
+
+\subsection{Communicating with the DMZ}
+The communication between the DMZ and the Master partition is done with the
+help of the hypervisor with a pair of preconfigured macless ports.
+From the operating sistem point of view, these macless interfaces behave
+identically with other interfaces, the only difference is in their
+implementation in the kernel.
+
+The macless ports are configured statically, the Master having the address
+1.1.1.1 and the DMZ having 1.1.1.2. Int he current setup, this connection
+is used mainly for controlling the DMZ, as the Slave partition has no means
+of connecting to the Master in this way. The motivation behind this design
+choice was the total isolation of the DMZ in case of an attack.
+
+\section{Services}
+\label{sec:services}
+
+\todo{Spune despre toate serverele instalate si ce fac}
+
+The machine needs certain servers and services in order to function as a 
+router. This section provides details on the installed services that are
+currently available how they are configured.
+
+\subsection{Master Partition services}
+The Master partition needs to bridge the LAN with the Wireless network.
+This is done using OpenVSwitch. Both interfaces are aggregated unde a
+virtual interface, br0.
+
+Listening on \textbf{br0} are certain servers:
+\begin{itemize}
+	\item Hostapd server, for authentification on the Wireless network.
+	\item DHCP server, servicing any IP requests. In order fo the DNS to work
+	relaying is configured in the DHCP server, informing any new connected
+	machines of the address of the external DNS server. This is currently
+	done statically, therefore changing the ISP, or connecting the router
+	to a new external network implies changing the mentioned DNS address
+	in the dhcpd configuration file.
+	\item SSH server, for remote connection and configuration
+	\item Webmin server, having increased importance, allowing
+	remote connection and configuration using any web browser in order
+	to provide conveninence in administration.
+\end{itemize}
+
+No specific firewall rules are applied to the \textbf{br0} interface, except
+for a forwading rule, that diverts all incoming traffic on port \textbf{8080} 
+to port \textbf{80} on the \textbf{DMZ}. This is the only way to acces 
+the webserver that is running on the Slave Partition.
+
+The Gateway interface, \textbf{eth0} has a limited number of servers servicing
+it, but it has the most firewall rules.
+
+The only servers listening on this interface are the \textbf{SSH} server, for
+configuration and the \textbf{DHCP} client for obtaining the dynamic IP.
+On demand, a PPoE client can be configured,.
+
+All external traffic for ports greater than \textbf{2000} is blocked by the HW firewall,
+so packets destined for other ports are dropped without reaching the SW.
+The exception is port \textbf{8080}, which is configured to be forwarded 
+to port \textbf{80} on the DMZ in a similar way to the \textbf{br0} interface.
+
+As for \textbf{NAT}, necessary for communicating between the internal and
+the external network, it is available through \textbf{iptables} rules.
+
+\subsection{DMZ services}
+The DMZ services are limited compared to the Master Partition.
+There is a \textbf{SSH} server running, for remote administration and
+a \textbf{lighttpd} server that serves static content.
+
+Howerver, almost any server that can be effectively run on a single core
+machine can be hosted here, for example FTP, streaming and mail servers.
+
+Due to the nature of the root filesistem setup on the DMZ, installing new
+servers implies making modifications to the rootfs and then writing the
+new rootfs to the flash memory. Servers also need to be able to recover
+gracefully in case the DMZ encounters a hard reset.
+
+
+\section{Packet flows}
+\label{sec:flows}
+
+Through design, the router has a number of different packet flows.
+Understanding and separating them can help in a number of applications,
+for example setting different processor affinities based on the 
+type of incoming traffic.
+
+In figure?? 4 packet flows are identified. Although one can argue that more
+flows can be isolated, they are, in general, separated by their different
+source and destination.
+
+The first flow, marked in COLOR1 in diagram??? is the LAN/Wireless flow.
+Traffic is generated in either Wireless or LAN and it has it's destination
+in the same network. This includes LAN to LAN, Wireless to Wireless and 
+LAN to Wireless traffic. This traffic is not subject to any artificial
+limitations or filtering, and the speed is limited by HW.
+
+The typical usecase that generates this kind of traffic is data transfer
+between computers on the internal network (in the same address space).
+
+The second flow, marked in COLOR2 is between the internal network and the
+external one. Traffic on this flow is filtered, external ports greater
+than \textbf{2000} being closed, with exceptions. Because the 2 networks
+are in distinct address spaces, all packets need to pass through NAT.
+
+A tipical usecase that would generate this flow is a computer on the internal
+network trying to access the internet.
+
+The third and fourth flow are similar, each having one endpoint in the DMZ
+partition. They are generated when either the external network or the internal
+one tries to acces resources located on the DMZ. These resources are not
+accessed directly, as the interface between the two partitions is not
+directly addressable by the two networks.
+
+For example when a machine on the internal network wants to acces the http
+server located on the DMZ, it will access port \textbf{8080}
+on its gateway address (in this case, the bridge, \textbf{br0}, interface).
+Incoming connections on port \textbf{8080} are routed statically to port
+\textbf{80} on the DMZ machine.
+
+The same principle applies for accesing the DMZ located http server from
+the external network. A request to port \textbf{8080} of the external
+interface are routed to the DMZ on port \textbf{80}.
+
+Any server running on the DMZ that needs to be access receives it's own
+forwarding rule, statically.

@@ -1,116 +1,234 @@
-\chapter{Features}
-\label{chapter:features}
-\todo{Capitolul este complet, dar continutul trebuie extins}
+\chapter{Router characteristics}
+\label{chapter:characteristics}
 
 This chapter presents the different functionalities of the router.
-Some of them are basic, while some of them are more advanced.
-The basic features are needed in order for it to function as a router,
-while the advanced ones showcase some interesting applications that
-can be housed and run on this router.
+The features range from basic requirements, needed in order
+for the setup to function as a minimal router to advanced features,
+that separate this setup from other comercial routers.
+All the features presented are for \textbf{this} setup.
+There are other functionalities that can be added, as the hardware
+and software allows it, but these are just a proof of concept.
 
 \section{Basic functionality}
 These functionalities are needed by the application in order to function
-as a router. They are provided by almost all the commercial routers,
+as a router. They are provided by almost all commercial routers,
 therefore they can not be absent.
 
 \subsection{LAN network with switching}
 \label{sub-sec:lan-switching}
 One of the basic characteristics of a router is being able to function as
-a switch. Software solutions, while being cheaper and more versatile
+a switch. Switching involves passing packets between different LAN segments.
+This can be done either at Layer 2 of the OSI reference model, using MAC
+addresses or at Layer 3, using IP addresses. Switches employ a number of
+protocols in order to determine where to send each incoming packet.
+
+Switching can be done both in hardware and in software.
+Software solutions, while being cheaper and more versatile
 in configuring, have a lot to suffer when it comes to intense 
 packet crunching. This is why HW switches are preffered.
 
-The integrated hardware switch provides 8 LAN ports and the chip is able
-to handle the packets up the Line Rate of 1Gbps.
-
+This setup integrates a hardware Layer 2 switch with 8 LAN ports 
+and is able to handle the packets at speeds up to 1Gbps.
 
 \subsection{Wireless network}
 \label{sub-sec:wireless}
-Included in the router is a wireless network that complies with the
-IEEE 802.11n standard.
+In recent years, Wireless capabilities have become one of the most
+used features of routers. With the increase in popularity of mobile devices, laptops,
+tablets and smartphones which rely almost solely on this technology in order to connect
+to the internet, not having a wireless network integrated into the router
+is not an option. Furthemore the adapter needs to be compatible with 
+all kinds of devices, both new and old.
 
-\todo{mai spune ceva?}
+To address this need, this router has a wireless network card that complies
+with the IEEE 802.11b/g/n standards and has a transfer rate of up to
+150Mbps.
 
 \subsection{Wireless security and authentification}
 \label{sub-sec:wireless-sec}
-Limiting access to the wireless network is done in software by hostapd,
-through the WPA2 protocol.
+Simply having a wireless connection is not enough for the good
+functioning of the router. Security is a very important issue.
+Being able to limit access to the wireless network only to the
+authorised devices is crucial.
 
-\subsection{Wireless + LAN bridge}
+Therefore, the setup has to offer authentification support. Out of
+several alternatives for an authenthification service,
+HostAP was chosen as it is easy to use and does not need constant
+configuration.
+
+Out of the authentification protocols, WEP,WPA and WPA2, the latter was chosen
+for its improved security over the former two.
+
+\subsection{Wireless and LAN bridge}
 \label{sub-sec:bridging}
-LAN and Wireless are bridged forming a single address space. This choice
-was made for the sake of simplicity, although it has a downside. Switching
-between LAN and the Wireless network is limited in speed compared 
-to switching just between the LAN ports
+On basic routers that feature both LAN and Wireless support, devices
+connected through different networks need to be able to communicate with
+each other.
+
+With this in mind, LAN and Wireless are bridged forming a single address space.
+This choice was made for the sake of simplicity, although it has a downside.
+Switching between LAN and the Wireless network is limited in speed compared 
+to switching between the LAN ports.
 
 \subsection{HW/SW routing}
 \label{sub-sec:routing}
-Routing is the core of the application. It can be done both in HW and SW.
+Routing, along with switching represents the core of the router's functions. 
+This device currently has capabilities for routing both in software
+and using the hardware.
 
-Routing using the hardware means configuring the Frame Manager to intercept
+Routing in software relies on setting static routes in the operating system.
+It is easily configurable, but the disadvantage is that all these operations
+consume precious CPU cycles. Therefore, routing using the hardware is
+preffered, where possible.
+
+Hardware routing implies configuring the Frame Manager to intercept
 certain types of traffic / addresses, to bypass verification by the kernel 
 and send them directly to a specified port. While it is a bit rigid and
-harder to configure, it can provide a very important speed boost over SW
+hard to configure, it can provide a very important speed boost over software
 routing.
 
-
-\subsection{NAT}
+\subsection{Network Address Translation}
 \label{sub-sec:nat}
-\todo{Oare trebuie explicat ce este NAT??}
-Network address translation is done in software, through iptables.
+Because the IPv4 address space is limited, routers usually have just one
+address, as it seen from the Internet. If each machine serviced
+by the router would have a different external IP address, the whole
+IP space would be used up very fast. The problem is that most users
+want to connect multiple machines to a router and each of them has to have
+internet access. They each have their own internal IP address but they
+must share only one external IP address.
+
+In order to solve this problem, the Network Address Translation protocol (NAT)
+was created. NAT holds mappings between internal IP addresses and external 
+ports. Each device that wants to access the internet will receive its own
+port on the external interface which will service all traffic directed
+to that machine. From the internet's point of view, there is only one
+machine, but multiple ports.
+
+This requirement had to be addressed as well, as the absence of NAT would
+mean that the internet is accessible only from the router, not from
+the connected devices. Therefore, NAT is done in software, through 
+\textbf{iptables}.
 
 \subsection{SW services}
 \label{sub-sec:sw-services}
-Among the basic software services there is a DHCP server, responsible 
-for servicing the LAN + Wireless.
+Modern roters employ a number of software services in order to run
+efficiently. Amongst these, there are DHCP client and server,
+PPPoE client and port forwarding.
 
-Port forwarding thorugh iptables.
+DHCP (Dynamic Host Configuration Protocol) is a standardized networking
+protocol used for distributing network configuration parameters such as
+IP addressesi automatically. When using DHCP, devices request networking parameters
+from a DHCP server, removing the need for a network administrator to
+configure these settings by hand.
 
-\todo{oare NAT merge pus tot aici?}
+The router needs both a DHCP client and a server. The client is used in
+order to request networking paramenters from the Internet Service Provider 
+(ISP) DHCP server. The internal DHCP server is used to service requests coming
+from the internal network, LAN and Wireless.
+
+The Point-to-Point Protocol over Ethernet (PPPoE) is a network protocol
+for encapsulating PPP frames inside Ethernet frames. It currently is one
+of the most used methods of connecting a device the ISP network.
+It's an alternative way of connecting and needs to be offered as an option,
+in order to cover basic usecases of the router.
+
+The last basic service offered is Port Forwading. Port forwarding
+binds an external port,located on the router,to a port located on a machine
+in the internal network. All traffic sent to the specified
+external port is forwarded to the internal port. As some services
+are port dependent, NAT can change incoming ports so these services
+can't function properly. This technique is used to permit communication between 
+external hosts and services provided within the private LAN.
+
+All these protocols and servers are available on the router. DHCP client
+and server are installed, the PPPoE client is installed and port forwarding
+is done through \textbf{iptables}.
 
 \subsection{Easy administration using Webmin}
 \label{sub-sec:webmin}
-\todo{da linkuri si explica mai bine ce e Webmin}
-Webmin is an open source project that provides a web-based interface for
+Configuring a router can be a confusing task, especially for inexperienced
+users. Although this router targets medium/advanced users, the problem
+of easy configuration still remains. Normally, this setup would be configured
+by connecting through SSH and by changing different options and configuration
+files directly. However, a more elegant and accesible solution can be found.
+
+Routers usually can be configured through a web interface. There are some
+clear advantages with this approach. The first one is that one can do the configuration
+on any device that has a web browser and is connected to the network.
+The second  advantage is that all options are a few clicks away, easy to find and
+alter.
+
+With this in mind, a router that is not capable of offering easy configuration
+would have a big dissadvantage over comercial routers. As a solution,
+a Webmin server has been installed on the router.
+
+Webmin\footnote{http://www.webmin.com/} is an open source project that provides a web-based interface for
 system administration for Unix. Using any modern browser one can setup
 user accounts, Apache, DNS and change everything you want about the
-administrated machine. 
+administrated machine.
 
-Using Webmin administrators don't need to connect phisically to the machine
+Using Webmin administrators don't need to connect physically to the machine
 and manually edit configuration files. It also provides support for scripts,
-a shell and has a modular construction, making it easy to extend, limit
+a shell and has a modular construction, making it easy to extend or limit
 the functionalities of the client.
 
-All administration is done through Webmin.
+Webmin is even more powerful than normal web-based router configuration
+solutions, as it allows its users to change virtually any setting on the
+router machine.
 
 \section{Advanced functionality}
-These features are not critical in order for the machine to run as a router,
-but provide powerful aditions to the range of applications the machine has.
-
+Basic features are the core of the router, but the advanced feature
+separate this router setup from other commercial solutions and provide
+powerful aditions to the router capabilities.
 
 \subsection{HW/SW firewall}
 \label{sub-sec:hw-firewall}
-The router has firewalling capabilities in software, through iptables.
-It also has the ability to configure the HW in order to limit specific IPs,
-block ports and filter incoming traffic.
+The firewall is a security system that controlls incoming and outgoing
+network traffic based on specific rules. The firewall is a barrier 
+between the trusted, internal network and the external network, deemed
+unsafe.
+
+Software firewalls are very customisable but costly for the CPU and can
+lead to performance deterioration. On the other hand, hardware firewalls
+don't put any stress on the CPU, but are harder to configure.
+
+The router has firewalling capabilities both in software and hardware.
+Software firewalling is done using \textbf{iptables}. Hardware firewalling
+is enabled by configuring the Frame Manager. This HW firewall can drop
+traffic, block ports and filter traffic based on source and destination.
 
 \subsection{Demilitarized partition}
 \label{sub-sec:dmz}
-For improved security, the router features two different virtual machine
-partitions: the Master partition, which controlls 3 of the 4 CPU cores
-and all the HW, and a Demilitarized partition (DMZ), which controlls just one
-CPU core.
+The feature that makes this setup stand out the most compared to similar
+performing routers is the presence of the virtualisation environment,
+and virtual machines.
+
+The Demilitarized Partition(DMZ) is a virtual machine, running on the 
+router that can be used to deploy all sorts of applications, for example
+web hosting, email servers and FTP servers.
+It is a full fledged machine, having its own dedicated CPU core, 
+kernel image and filesystem and most importantly it can be restarted
+without restarting the whole router.
 
 This DMZ partition can be compromised without losing data, or contaminating
-the entire machine. It can be easily rebooted and restored without 
-rebooting the whole router. The root filesystem is loaded from flash, 
+the entire machine. The root filesystem is loaded from flash, 
 but it can be loaded restored from an virtual machine image as well.
 
-It has a range of applications, for example hosting webservers and it's
-completely isolated.
+Having such a feature is a powerful bonus of this router as the DMZ cand
+host almost any application that runs properly on a single core machine.
+It is secure, completely isolated, easy to setup and restore.
 
-\subsection{SW services}
-\label{sub-sec:sw-services}
-Installed on the DMZ partition is a lighttpd server that serves static content.
-It's just an example of the application that can run securely, without
-impacting the router's overall performance
+Installed on the DMZ partition is a lighttpd server that serves static
+content. It is just an example of the applications that can run securely,
+without impacting the router's overall performance.
+
+\subsection{Storing space on the HDD}
+\label{sub-sec:storing}
+Routers usually feature limited storing space, but in recent years, this
+feature has become more and more requested. Having a full HDD usually
+increases the router price beyond mid level but for multiple potential
+virtual machines and for the type of applications that the router
+is able to run, not having enough storing space can be detrimental
+
+As a result the router is equipped with a 250GB HDD. All applications
+benefit from this storing space and it can even save multiple snapshots of
+the DMZ parition.

@@ -1,29 +1,89 @@
-\chapter{The t1040 platform}
+\chapter{The T1040 platform}
 \label{chapter:t1040-platform}
 
-This chapter offers details on the hardware used in this "Router on a chip".
-The first section offers hardware specifications necessary when comparing this
-platform to other commercial routers, the second section offers general
-details on the specific architecture used when building the platform,
-and the last section evaluates the strengths and weakneses of the hardware
-in order to asses better the final performance of this application
+In order to create a proper router setup one needs to understand
+all the hardware specifications of available products and select the
+most suitable hardware.
 
+The decision to use the T1040 platform can be explained by examining the
+hardware specifications and its general architecture, which is the aim of
+this chapter.
 
-\section{HW specs}
+Previously, certain requirements for the finished router
+were stated. Proving to be a suitable platform for this router
+implies catering to all these needs. Simply listing the available
+hardware is not enough as this chapter needs to explain \textbf{why}
+the hardware caters best to the needs of the router.
+
+The first part presents general hardware specifications,
+necessary when comparing this platform to other commercial router
+hardware. In the other sections, advanced construction and architectural
+features are reviewed, as these provide imporant advantages for the 
+functioning router.
+
+\section{Hardware specifications}
 \label{sec:specs}
 
-The t1040 platform hosts a quad core processor and targets the low-end
-sector through it's price accesibility and low power consumption.
-The e5500 cores are based on the Power architecture, have a maximum
-frequency of 1.4Ghz and host a 256KB L2 cache each.
+For a complete list of hardware specifications see [\footnote{T1040 HW specs -
+http://www.freescale.com/webapp/sps/site/prod_summary.jsp?code=T1040}].
 
-An important feature for this aplication is the presence of the 
-3 levels of instructions: user, supervisor and hypervisor. This allows 
-the processor to cooperate with a hypervisor, enabling hardware 
-virtualisation and extending the application scenarios that can be run.
+\subsection{CPU}
+One of the necessary requirements for the processor to have multicore 
+architecture and to be strong enough to support a full fledged Unix
+based operating system.
 
-The RAM memory is DDR3 and the platform support a maximum throughput of
-1600MT/s. DMA is dual four channel
+In terms of CPU processing power, the platform hosts four processing cores
+running at a frequency of up to 1.4Ghz each. These small yet powerful e5500
+\footnote{http://www.freescale.com/webapp/sps/site/overview.jsp?code=64BIT}
+are based on the Power architecture are equipped with 256KB L2.
+The processing power is more than enough in order to run a different operating
+system on each core with all kinds of servers and services.
+While it doesn not have graphical memory, the setup can even run
+graphical servers, although with reduced performance.
+
+Being powerful enough to run multiple operating systems simlutaneously,
+not using virtualization would greatly limit the potential of this
+platform. Running several virtual machines is usefull for this setup,
+but performance can be hindered if virtualization is handled by software.
+When virtualization is done in software, virtual machines are treated
+like normal programs by the operating system. Unfortunately, 
+accessing hardware devices from the virtual machine(VM) implies
+passing the call from the VM to the operating system, which in turn is able
+to access the hardware. This creates overhead and the VM performance is
+rather limited.
+
+Hardware virtualization solutions have increased complexity,
+but they offer improved performance over software solutions.
+
+An important feature of this platform is the presence of the 
+3 levels of instructions: user, supervisor and hypervisor.
+Instruction levels in CPU instruction sets control access of the program
+currently running on the processor to resources such as I/O ports, special
+instructions and memory regions. The hypervisor instruction level
+is used in hardware virtualization by the Virtual Machine Manager(VMM)
+or hypervisor, that acts as a host for the virtual machines.
+
+All these features allow the platform to run multiple VMs without
+losing performance, greatly extending application scenarios that can be run.
+
+\subsection{Memory}
+Random Access Memory(RAM) is important in every machine, as its speed and
+quantity shape the overall performance of the machine. Too little RAM
+and programs running at one time on the machine are limited both in
+performance and number. Having an outdated type of RAM implies slow
+access speeds which again, limit the overall performance of running tasks.
+
+In the virtualization environment RAM requierements are even greater,
+as each machine needs its own dedicated RAM space.
+
+The T1040 platform supports DDR3 type RAM and the maximum throughput is
+1600MT/s. For this application only 2GB of RAM were installed, as this is
+satisfactory for the type of applications running.
+
+As this is a networking application Direct Memory Access(DMA) is one
+of the critical features used by the system. DMA allows subsystems 
+to access the main system memory independently of the CPU.
+To address this, the platform hosts dual four channel DMA.
 
 \todo{reread the above paraghraph}
 

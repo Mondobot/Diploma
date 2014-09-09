@@ -1,75 +1,58 @@
 \chapter{Introduction}
 \label{chapter:intro}
 
-\textbf{This is just a demo file. It should not be used as a sample for a thesis.}\\
-\todo{Remove this line (this is a TODO)}
+Routers are dedicated netwoking devices, specialized in handling data
+packets between computer networks. Their main purpose is forwarding packets to
+their next destinations. When a data packet reaches a router through one of
+the lines, the destination address is read and then, based upon a routing
+table or specialised routing policies and algorithms, it is sent toward
+its next destination.
 
-\section{Project Description}
-\label{sec:proj}
-
-\section{Background}
-\label{sec:background}
-
-This thesis presents the \textbf{\project}.
-
-
-\section{The Problem}
-\label{sec:the-problem}
+Since the apparition of routers in the mid '70s, their role has not 
+fundamentally changed, but as the hardware and the software have advanced, 
+routers have become more compact, affordable and the offered functionalities
+have diversified.
 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean aliquam lectus vel orci malesuada accumsan. Sed lacinia egestas tortor, eget tristiqu dolor congue sit amet. Curabitur ut nisl a nisi consequat mollis sit amet quis nisl. Vestibulum hendrerit velit at odio sodales pretium. Nam quis tortor sed ante varius sodales. Etiam lacus arcu, placerat sed laoreet a, facilisis sed nunc. Nam gravida fringilla ligula, eu congue lorem feugiat eu.
+\section{State of the Art}
+\label{sec:state-of-the-art}
 
-\section{The Solution}
+Early routers were general purpose computers configured to forward packets
+between networks. With time, they were replaces by specialised hardware,
+that was more poweful in handling network packets.
+Nowadays, routers incorporate internal memory, general purpose processors, 
+switches and wireless capabilities.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean aliquam lectus vel orci malesuada accumsan. Sed lacinia egestas tortor, eget tristiqu dolor congue sit amet. Curabitur ut nisl a nisi consequat mollis sit amet quis nisl. Vestibulum hendrerit velit at odio sodales pretium. Nam quis tortor sed ante varius sodales. Etiam lacus arcu, placerat sed laoreet a, facilisis sed nunc. Nam gravida fringilla ligula, eu congue lorem feugiat eu.
+Advanced routers host tens of network interfaces, Harddisks, multiple cores,
+proprietary operating systems and range of communication processors
+for offloading different tasks in hardware (Security, pattern matching etc)
 
+\section{Context and Motivation}
+\label{sec:context-and-motivation}
 
+High end routing equipments have a broad range of configuration options
+available but the price can reach several hundred dolars. At the other
+end of the spectrum, low end routers offer a reduced number of network
+interfaces and poor performance.
 
-Introduction:
--length= ??(probabil pana in 4 pagini)    
+For casual users, a low end router can fulfill all their needs, but as
+demands go up, so does the price. Advanced users and small companies
+are interested in more configuration options but are reluctant to invest
+in high end routers. 
 
-* Background:
-        - state of the art
-        - utilitatea routerelor de genul
-        - context / routere / ce exista pe piata
-        - cam 1 pagina?
-        
-    * The problem
-        - ce probleme au solutiile existente
-        - 0.5 - 1 pagini?
-        
-    * The solution
-        - ce fac eu
-        - ce am in plus, de ce e mai bun
-        - foarte sumar
-        - cam 1 pagina
+This "Router on a chip" addresses the needs of medium/advanced
+users and small companies who need more options, decent performance and
+maybe hosting space without making a pricey aquisition.
 
+In chosing hardware for this router several factors were followed:
+\begin{itemize}
+	\item The processor had to be multicore and had to be able
+	to support an Unix based operating sistem
+	\item The router had to have similar networking performance, with
+	it's comercial counterparts
+	\item Power consumption had to be as low as possible
+	\item Price had to be as low, compared to high end devices
+\end{itemize}
 
-Main body:
-    -length= ? (20-30 pagini)
-
-* The Freescale Platform
-        - hw specs
-        - detalii generale arhitectura
-- ce face bine, de ce e bun pentru un astfel de proiect
-- 4 pagini?        
-
-    * Characteristics
-        - ce functionalitati are
-        - prezentat in subcapitole separate fiecare parte
-        (TODO)
-        - poate intra mult, deci poate chiar 10
-
-    * Architecture:
-        - scheme
-        - altceva???
-
-
-    
-* Scenarii de folosire:
-        - small office router    
-        - lightweight hosting
-        - TODO: mai gaseste chestii de bagat
-    
-    * Performante:
-        - maybe?
+As it matched most of the requirements, the T1040 processor provided by
+Freescale was chosen for building this router.

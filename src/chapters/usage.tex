@@ -1,22 +1,67 @@
 \chapter{Usecases}
 \label{chapter:usecases}
+In previous chapters both software and hardware capabilities of this
+setup were preseted.
+There were also indications on potential bottlenecks and performance
+limitations. All these characteristics, combined with the price range
+of the platform and its power consumption, recommend it for certain
+applications. The limited number of interfaces makes this router
+better suited for home / small office use. 
 
-\textbf{This is just a demo file. It should not be used as a sample for a thesis.}\\
-\todo{Remove this line (this is a TODO)}
+The wireless card supports
+more connections than the physical ones, but perfomance is dictated
+by the type of the wireless card. The currently instaled one is an entry
+level card, so performance is rather weak.
 
-\section{Use 1}
-\label{sec:use1}
+Another aspect taken into consideration is that, while easy to configure
+through the web interface, the setup offers a great range of configuration
+options that can be hard to understand for the average user. With this
+in mind, this router is most likely destined for medium and advanced users.
 
-\section{Use 2}
-\label{sec:use2}
+\section{Simple Router}
+\label{sec:use-router}
+The first usecase for this setup is a simple router, suited for home
+or small office use. Basic router features like NAT, DHCP, switching,
+wireless as well as the configurable firewall are the base of this usecase.
 
-\section{Use 3}
-\label{sec:use3}
+In most cases, performance in this case is not critical,
+the DMZ is not used and the HDD is not necessary.
 
-\section{Use 4}
-\label{sec:use4}
+While it can function perfectly in this role, other single-core solutions
+can be found on the market that offer similar perfomance, but feature a
+lower power consumption, lower price and are easier to configure and
+maintain.
 
-\section{Use 5}
-\label{sec:use5}
+If performance is critical, the DMZ can be disabled (all 4 cores would be
+controlled by the Master Partition), the wireless card can be upgraded
+and certain CPU affinities can be set in order to ballance the load.
 
+The conclusion of this usecase is that if performance is not critical,
+this is a sub-optimal choice for role of simple router.
 
+\section{Lightweight hosting service}
+\label{sec:hosting-service}
+Another potential usecase of this setup is that of a hosting platform for
+several webservers. The features that recommends it for such a purpose
+is the customizable number of virtual machines. If router services are
+not critical, the master partiton can downgraded and up to 3 virtual
+machines can function at the same time on the machine, each with its own
+servers. These machines function independently and can be powerd on/off and
+reset without disturbing the whole ecosystem.
+
+The usecase is called "lightweight", as this architecture
+is not the best suited for heavy server-side processing.
+
+In conclusion, this router can offer some powerful customization options
+for small companies trying to host some of their servers on isolated
+environments.
+
+\section{Hybrid router-hosting service}
+\label{sec:hybrid}
+The usecase that is most suitable for this setup is that of a hybrid,
+deploying full router capabilities while still having one or two virtual
+machines used of services.
+
+This would be the best use of the router's resources and would prove valuable,
+cost wise and performance wise. The designation would still be "lightweight"
+as the hardware isn't best suited for handling CPU intensive tasks.
